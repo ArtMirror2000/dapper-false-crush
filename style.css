@@ -1,0 +1,29 @@
+body, html {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+#aframe-container {
+  flex: 1;
+  position: relative;
+}
+
+#static-content {
+  height: 20%;
+  background: #ffffff;
+  text-align: center;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+#upload-button {
+  font-size: 16px;
+  padding: 10px 20px;
+  cursor: pointer;
+}

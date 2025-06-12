@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.1.0/dist/aframe-extras.min.js"></script>
+    <script src="./combo-ocean.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/RGBELoader.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <script>
+      // Register the 'hdri' component
+      AFRAME.registerComponent('hdri', {
+        schema: {
+          url: {type: 'string'}, // Define the data schema
+        },
+        init: function () {
+          const { url } = this.data; // Get the URL from the component data
+          const sceneEl = this.el; // Reference to the A-Frame scene element
+          const scene = sceneEl.object3D; // THREE.js scene object
+          const renderer = sceneEl.renderer; // A-Frame renderer
+          // Set up the HDRI loader
+          const rgbeLoader = new THREE.RGBELoader();
+          rgbeLoader.setDataType(THREE.UnsignedByteType);
+          rgbeLoader.load(url, (texture) => {
+            // PMREM Generator for converting the texture to a suitable format
+            const pmremGenerator = new THREE.PMREMGenerator(renderer);
+            pmremGenerator.compileEquirectangularShader();
+            const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+            scene.environment = envMap; // Set the scene environment
+            texture.dispose();
+            pmremGenerator.dispose();
+          });
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <a-scene
+        renderer="colorManagement: true; physicallyCorrectLights: true;"
+        hdri="url: https://cdn.glitch.global/4ae2ce04-2cd7-4411-b3fd-7503c389b5ce/RESIZE-EXPORT-128-64-wasteland_clouds_puresky_1k.hdr?v=1699382834457">
+        <a-ocean-plane height="500" width="100" position="0 -1 0"></a-ocean-plane>
+
+              <!-- Camera with cursor -->
+      <a-entity
+        id="camera"
+        position="0 1.6 0"
+        camera
+        look-controls
+        wasd-controls
+      >
+        <a-cursor color="#333" maxdistance="30"></a-cursor>
+      </a-entity>
+
+      <a-sky rotation="0 180 0" src="https://cdn.glitch.global/c2ccdc8b-d87a-49af-95e6-e3cd029bbd31/2048-polyhaven-wasteland_clouds_puresky.jpeg?v=1699386634988"></a-sky>
+      <a-box id= "cube" position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9"></a-box>
+      <!-- Image to show/hide -->
+      <a-image
+        id="image"
+        material="src:https://cdn.glitch.global/8101fa1b-bdce-4002-a936-382cfaa01046/bubble.png; transparent:true"
+        position="1 3.6 -5"
+        scale="2 2 0"
+        visible="false"
+      ></a-image>
+      
+      <a-text
+          id="text"
+          value="happy waving !!!"
+          position="0.2 3.9 -5"
+          scale="1 1 1"
+          color="black"
+          visible="false"
+        ></a-text>
+      
+      <a-entity light="color: #87601d; intensity: 0.6; castShadow: true" position="65.46418 5.64874 46.8977"></a-entity>
+    </a-scene>
+    
+    <script>
+      // When the window is fully loaded, run the function
+      window.onload = function () {
+        // Get the cube, image, and text elements
+        var cube = document.getElementById("cube");
+        var image = document.getElementById("image");
+        var text = document.getElementById("text");
+
+        // Add a click event listener to the cube
+        cube.addEventListener("click", function () {
+          // Toggle visibility of the image and text
+          var isVisible = !image.getAttribute("visible");
+          image.setAttribute("visible", isVisible);
+          text.setAttribute("visible", isVisible);
+        });
+      };
+    </script>
+    
+     </div>
+    <div id="static-content">
+      <h2>Point to the cube and click & WASD</h2>
+    </div>
+    
+  </body>
+</html>
